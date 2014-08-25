@@ -1,3 +1,8 @@
+import subprocess
+import os
+import re
+import sys
+
 def init():
   return Device()
 
@@ -17,11 +22,18 @@ class General:
     pass
 
   def uptime(self):
-    pass    
+        try:
+            output = subprocess.check_output(['uptime'])
+            search = re.search(r'up\s(.*?)(?=\,)', output, re.I)
+            uptime = search.group(1)
+            return uptime
+        except:
+            print(sys.exc_info()[0])
+            return 'n/a'
 
   def processes(self):
     pass
-    
+
 
 class CPU:
   """docstring for CPU"""
@@ -32,7 +44,7 @@ class CPU:
     pass
 
   def speed(self):
-    pass   
+    pass
 
 
 class GPU:
@@ -44,7 +56,7 @@ class GPU:
     pass
 
   def speed(self):
-    pass         
+    pass
 
 
 class Memory:
@@ -56,7 +68,7 @@ class Memory:
     pass
 
   def total(self):
-    pass  
+    pass
 
   def used(self):
     pass
@@ -71,4 +83,4 @@ class Network:
     pass
 
   def connections(self):
-    pass  
+    pass
