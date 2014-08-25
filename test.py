@@ -2,4 +2,5 @@ import pifarm_device
 
 device = pifarm_device.init()
 
-print(device.general.uptime())
+print('general.uptime: {}'.format(device.general.uptime()))
+print('general.processes: {}'.format(device.general.processes()))

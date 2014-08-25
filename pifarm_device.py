@@ -17,11 +17,11 @@ class Device:
 
 
 class General:
-  """docstring for General"""
-  def __init__(self):
-    pass
+    """docstring for General"""
+    def __init__(self):
+        pass
 
-  def uptime(self):
+    def uptime(self):
         try:
             output = subprocess.check_output(['uptime'])
             search = re.search(r'up\s(.*?)(?=\,)', output, re.I)
@@ -31,8 +31,13 @@ class General:
             print(sys.exc_info()[0])
             return 'n/a'
 
-  def processes(self):
-    pass
+    def processes(self):
+        try:
+            output = subprocess.check_output(['ps', '-e'])
+            processes = len(output.split('\n'))
+            return processes
+        except:
+            return 'n/a'
 
 
 class CPU:
