@@ -41,27 +41,34 @@ class General:
 
 
 class CPU:
-  """docstring for CPU"""
-  def __init__(self):
-    pass
+    """docstring for CPU"""
+    def __init__(self):
+        pass
 
-  def temperature(self):
-    pass
+    def temperature(self):
+        output = subprocess.check_output(['cat', '/sys/class/thermal/thermal_zone0/temp'])
+        raw_temperature = float(output)
+        temperature = raw_temperature/1000
+        return '{0:.2f} C'.format(temperature)
 
-  def speed(self):
-    pass
+    def speed(self):
+        pass
 
 
 class GPU:
-  """docstring for GPU"""
-  def __init__(self):
-    pass
+    """docstring for GPU"""
+    def __init__(self):
+        pass
 
-  def temperature(self):
-    pass
+    def temperature(self):
+        output = subprocess.check_output(['/opt/vc/bin/vcgencmd',               'measure_temp'])
+        search = re.search(r'temp=(.*?)(?=\')', output, re.I)
+        temperature = search.group(1)
+        return '{0:.2f} C'.format(temperature)
 
-  def speed(self):
-    pass
+
+    def speed(self):
+        pass
 
 
 class Memory:

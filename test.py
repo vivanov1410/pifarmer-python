@@ -4,3 +4,4 @@ device = pifarm_device.init()
 
 print('general.uptime: {}'.format(device.general.uptime()))
 print('general.processes: {}'.format(device.general.processes()))
+print('cpu.temperature: {}'.format(device.cpu.temperature()))
