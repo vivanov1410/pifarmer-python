@@ -47,12 +47,14 @@ class CPU:
 
     def temperature(self):
         output = subprocess.check_output(['cat', '/sys/class/thermal/thermal_zone0/temp'])
-        raw_temperature = float(output)
-        temperature = raw_temperature/1000
-        return '{0:.2f} C'.format(temperature)
+        temperature = float(output)
+        return '{0:.2f} C'.format(temperature/1000)
 
     def speed(self):
-        pass
+        #output = subprocess.check_output(['sudo cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq'])
+        f = os.popen('sudo cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq')
+        speed = float(f.read())
+        return '{0} MHz'.format(speed/1000)
 
 
 class GPU:
@@ -63,9 +65,8 @@ class GPU:
     def temperature(self):
         output = subprocess.check_output(['/opt/vc/bin/vcgencmd',               'measure_temp'])
         search = re.search(r'temp=(.*?)(?=\')', output, re.I)
-        temperature = search.group(1)
+        temperature = float(search.group(1))
         return '{0:.2f} C'.format(temperature)
-
 
     def speed(self):
         pass
