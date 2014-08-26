@@ -51,7 +51,6 @@ class CPU:
         return '{0:.2f} C'.format(temperature/1000)
 
     def speed(self):
-        #output = subprocess.check_output(['sudo cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq'])
         f = os.popen('sudo cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq')
         speed = float(f.read())
         return '{0} MHz'.format(speed/1000)
