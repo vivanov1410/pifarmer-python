@@ -82,20 +82,20 @@ class Memory:
         try:
             output = subprocess.check_output(['free', '-m'])
             free = output.split('\n')[1].split()[1]
-            return int(free)
+            return '{} MB'.format(int(free))
         except:
             return 'n/a'
 
     def used(self):
         output = subprocess.check_output(['free', '-m'])
         free = output.split('\n')[1].split()[2]
-        return int(free)
+        return '{} MB'.format(int(free))
 
     def free(self):
         try:
             output = subprocess.check_output(['free', '-m'])
             free = output.split('\n')[1].split()[3]
-            return int(free)
+            return '{} MB'.format(int(free))
         except:
             return 'n/a'
 
