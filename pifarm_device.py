@@ -108,11 +108,9 @@ class Network:
         pass
 
     def ip(self):
-        arg = 'ip route list'
-        process = subprocess.popen(arg, shell=True, stdout=subprocess.PIPE)
-        output = process.communicate()
-        splited_output = output[0].split()
-        ip = splited_output[splited_output.index('src')+1]
+        output = subprocess.check_output(['ip', 'route', 'list']).split()
+        index = output.index('src') + 1
+        ip = output[index]
         return ip
 
     def connections(self):
