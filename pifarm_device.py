@@ -15,6 +15,7 @@ class Device:
         self.cpu = Cpu()
         self.gpu = Gpu()
         self.memory = Memory()
+        self.hdd = Hdd()
         self.network = Network()
 
 
