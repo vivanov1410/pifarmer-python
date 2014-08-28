@@ -12,8 +12,8 @@ class Device:
 
     def __init__(self):
         self.general = General()
-        self.cpu = CPU()
-        self.gpu = GPU()
+        self.cpu = Cpu()
+        self.gpu = Gpu()
         self.memory = Memory()
         self.network = Network()
 
