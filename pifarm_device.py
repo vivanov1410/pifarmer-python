@@ -8,7 +8,7 @@ def init():
 
 
 class Device:
-    """docstring for Device"""
+    """Main class that represents a Device"""
 
     def __init__(self):
         self.general = General()
@@ -21,9 +21,7 @@ class Device:
 class General:
     """General device information"""
 
-    def __init__(self):
-        pass
-
+    @property
     def uptime(self):
         try:
             output = subprocess.check_output(['uptime'])
@@ -33,6 +31,7 @@ class General:
         except:
             return 'n/a'
 
+    @property
     def processes(self):
         try:
             output = subprocess.check_output(['ps', '-e'])
@@ -42,29 +41,26 @@ class General:
             return 'n/a'
 
 
-class CPU:
-    """docstring for CPU"""
+class Cpu:
+    """CPU information"""
 
-    def __init__(self):
-        pass
-
+    @property
     def temperature(self):
         output = subprocess.check_output(['cat', '/sys/class/thermal/thermal_zone0/temp'])
         temperature = float(output)
         return '{0:.2f} C'.format(temperature / 1000)
 
+    @property
     def speed(self):
         f = os.popen('sudo cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq')
         speed = float(f.read())
         return '{0} MHz'.format(speed / 1000)
 
 
-class GPU:
-    """docstring for GPU"""
+class Gpu:
+    """GPU information"""
 
-    def __init__(self):
-        pass
-
+    @property
     def temperature(self):
         output = subprocess.check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'])
         search = re.search(r'temp=(.*?)(?=\')', output, re.I)
@@ -73,24 +69,24 @@ class GPU:
 
 
 class Memory:
-    """docstring for Memory"""
+    """Memory information"""
 
-    def __init__(self):
-        pass
-
+    @property
     def total(self):
         try:
             output = subprocess.check_output(['free', '-m'])
-            free = output.split('\n')[1].split()[1]
-            return '{} MB'.format(int(free))
+            total = output.split('\n')[1].split()[1]
+            return '{} MB'.format(int(total))
         except:
             return 'n/a'
 
+    @property
     def used(self):
         output = subprocess.check_output(['free', '-m'])
-        free = output.split('\n')[1].split()[2]
-        return '{} MB'.format(int(free))
+        used = output.split('\n')[1].split()[2]
+        return '{} MB'.format(int(used))
 
+    @property
     def free(self):
         try:
             output = subprocess.check_output(['free', '-m'])
@@ -100,12 +96,38 @@ class Memory:
             return 'n/a'
 
 
+class Hdd:
+    """HDD information"""
+
+    @property
+    def total(self):
+        try:
+            output = subprocess.check_output(['df', '-h'])
+            total = output.split('\n')[1].split()[1]
+            return total
+        except:
+            return 'n/a'
+
+    @property
+    def used(self):
+        output = subprocess.check_output(['free', '-m'])
+        used = output.split('\n')[1].split()[2]
+        return used
+
+    @property
+    def free(self):
+        try:
+            output = subprocess.check_output(['free', '-m'])
+            free = output.split('\n')[1].split()[3]
+            return free
+        except:
+            return 'n/a'
+
+
 class Network:
     """docstring for Network"""
 
-    def __init__(self):
-        pass
-
+    @property
     def ip(self):
         try:
             output = subprocess.check_output(['ip', 'route', 'list']).split()
@@ -115,6 +137,7 @@ class Network:
         except:
             return 'n/a'
 
+    @property
     def connections(self):
         try:
             output = subprocess.check_output(['netstat', '-tun'])
