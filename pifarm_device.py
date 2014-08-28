@@ -111,14 +111,14 @@ class Hdd:
 
     @property
     def used(self):
-        output = subprocess.check_output(['free', '-m'])
+        output = subprocess.check_output(['df', '-h'])
         used = output.split('\n')[1].split()[2]
         return used
 
     @property
     def free(self):
         try:
-            output = subprocess.check_output(['free', '-m'])
+            output = subprocess.check_output(['df', '-h'])
             free = output.split('\n')[1].split()[3]
             return free
         except:
