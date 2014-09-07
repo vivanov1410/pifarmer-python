@@ -1,10 +1,9 @@
 import subprocess
 import os
 import re
+import json
+import requests
 
-
-def init():
-    return Device()
 
 def get_serial():
     serial = '0000000000000000'
@@ -21,8 +20,44 @@ def get_serial():
     return serial
 
 
+def connect_device(device_id, environment='development'):
+    api = Api(environment)
+    data = api.connect(device_id, get_serial())
+
+    return Device(data['id'], data['name'], data['description'], data['serialNumber'])
+
+
 class Device:
     """Main class that represents a Device"""
+
+    def __init__(self, device_id, name, description, serial_number):
+        self.id = device_id
+        self.name = name
+        self.description = description
+        self.serial_number = serial_number
+        self.stats = Statistics()
+
+
+class Api:
+    def __init__(self, environment='development'):
+        self.base_url = 'http://localhost:54627/v1'
+        self.sessionToken = None
+
+    def connect(self, device_id, serial):
+        url = '{0}/auth/login/device'.format(self.url)
+        headers = {'content-type': 'application/json'}
+        payload = {'deviceId': device_id, 'serial': serial}
+
+        response = requests.post(url, data=json.dumps(payload), headers=headers)
+        if response.status_code == requests.codes.ok:
+            data = response.json()
+            self.sessionToken = data['sessionToken']
+            return data
+        else:
+            response.raise_for_status()
+
+
+class Statistics:
 
     def __init__(self):
         self.general = General()
