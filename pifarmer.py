@@ -6,6 +6,20 @@ import re
 def init():
     return Device()
 
+def get_serial():
+    serial = '0000000000000000'
+    try:
+        f = open('/proc/cpuinfo', 'r')
+        for line in f:
+            if line[0:6] == 'Serial':
+                serial = line[10:26]
+        f.close()
+    except:
+        print('Error. Could not detect serial number.')
+        raise
+
+    return serial
+
 
 class Device:
     """Main class that represents a Device"""
