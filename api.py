@@ -1,7 +1,9 @@
 import json
-from cache import *
+import time
 
 import requests
+
+from cache import *
 
 
 class BaseApi:
@@ -29,9 +31,14 @@ class OnlineApi(BaseApi):
 
 class OfflineApi(BaseApi):
     def connect(self, device_id, serial_number):
-        self._cache = Cache(device.id)
+        self._cache = Cache()
         device_model = {'id': device_id, 'name': 'n/a', 'description': 'n/a', 'serial_number': serial_number}
         return device_model
 
     def heartbeat(self, device):
-        db = SqliteDatabase(device.id + '.db')
+        stats = device.stats
+        reading = StatisticsReading(device_id=device.id,
+                                    cpu_temperature=stats.cpu.temperature,
+                                    gpu_temperature=stats.gpu.temperature,
+                                    at=time.time())
+        reading.save()

@@ -1,8 +1,7 @@
 import subprocess
 import os
-import re
 
-import pickledb
+from cache import *
 
 
 class Device:
@@ -20,8 +19,9 @@ class Device:
         self._api.heartbeat(self)
 
     def show_cache(self):
-        db = pickledb.load(self.id, False)
-        print(db.getall())
+        for reading in StatisticsReading.select():
+            print('device_id={0}, cpu_temp={1}, gpu_temp={2}, at={3}'
+                  .format(reading.device_id, reading.cpu_temperature, reading.gpu_temperature, reading.at))
 
 
 class Statistics:
@@ -37,6 +37,9 @@ class Statistics:
 
 class General:
     """General device information"""
+
+    def __init__(self):
+        pass
 
     @property
     def uptime(self):
@@ -61,6 +64,9 @@ class General:
 class Cpu:
     """CPU information"""
 
+    def __init__(self):
+        pass
+
     @property
     def temperature(self):
         try:
@@ -72,15 +78,12 @@ class Cpu:
         #return '{0:.2f} C'.format(temperature / 1000)
         return temperature
 
-    @property
-    def speed(self):
-        f = os.popen('sudo cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq')
-        speed = float(f.read())
-        return '{0} MHz'.format(speed / 1000)
-
 
 class Gpu:
     """GPU information"""
+
+    def __init__(self):
+        pass
 
     @property
     def temperature(self):
@@ -97,6 +100,9 @@ class Gpu:
 
 class Memory:
     """Memory information"""
+
+    def __init__(self):
+        pass
 
     @property
     def total(self):
@@ -126,6 +132,9 @@ class Memory:
 class Hdd:
     """HDD information"""
 
+    def __init__(self):
+        pass
+
     @property
     def total(self):
         try:
@@ -153,6 +162,9 @@ class Hdd:
 
 class Network:
     """docstring for Network"""
+
+    def __init__(self):
+        pass
 
     @property
     def ip(self):
