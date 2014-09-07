@@ -40,7 +40,7 @@ def offline():
 
 def connect_device(device_id, environment='development'):
     api = OnlineApi(environment) if online() else OfflineApi(environment)
-    device = api.connect(device_id)
+    device = api.connect(device_id, get_serial())
     return Device(device['id'], device['name'], device['description'], device['serial_number'])
 
 
