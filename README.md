@@ -1,2 +1,7 @@
-pifarm-device-python
+pifarmer
 ====================
+
+```
+& sudo apt-get install python-pip
+$ pip install -r requirements.txt
+```

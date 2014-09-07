@@ -1,7 +1,7 @@
 import pifarmer
 
 device = pifarmer.connect_device('540bbafbe81e5f23e8d15a1c')
-print(device.name)
+print(device.serial_number)
 # device.heartbeat()
 
 # print('general.uptime: {}'.format(device.general.uptime))

@@ -2,6 +2,8 @@ import subprocess
 import os
 import re
 import json
+import socket
+
 import requests
 
 
@@ -20,11 +22,26 @@ def get_serial():
     return serial
 
 
-def connect_device(device_id, environment='development'):
-    api = Api(environment)
-    data = api.connect(device_id, get_serial())
+def online():
+    server = 'www.google.com'
+    try:
+        host = socket.gethostbyname(server)
+        socket.create_connection((host, 80), 2)
+        return True
+    except:
+        pass
+    return False
 
-    return Device(data['id'], data['name'], data['description'], data['serialNumber'])
+
+def offline():
+    return True
+    #return not online()
+
+
+def connect_device(device_id, environment='development'):
+    api = OnlineApi(environment) if online() else OfflineApi(environment)
+    device = api.connect(device_id)
+    return Device(device['id'], device['name'], device['description'], device['serial_number'])
 
 
 class Device:
@@ -38,23 +55,34 @@ class Device:
         self.stats = Statistics()
 
 
-class Api:
+class BaseApi:
     def __init__(self, environment='development'):
-        self.base_url = 'http://localhost:54627/v1'
+        self.base_url = 'http://localhost:54627/v1' if environment == 'development' else 'http://pifarm.apphb.com/v1'
+        self.offline = offline
+        self.online = not offline
         self.sessionToken = None
 
-    def connect(self, device_id, serial):
-        url = '{0}/auth/login/device'.format(self.url)
+
+class OnlineApi(BaseApi):
+    def connect(self, device_id, serial_number):
+        url = '{0}/auth/login/device'.format(self.base_url)
         headers = {'content-type': 'application/json'}
-        payload = {'deviceId': device_id, 'serial': serial}
+        payload = {'deviceId': device_id, 'serialNumber': serial_number}
 
         response = requests.post(url, data=json.dumps(payload), headers=headers)
         if response.status_code == requests.codes.ok:
             data = response.json()
             self.sessionToken = data['sessionToken']
-            return data
+            deviceModel = {'id': data['id'], 'name': data['name'], 'description': data['description'], 'serial_number': data['serialNumber']}
+            return deviceModel
         else:
             response.raise_for_status()
+
+
+class OfflineApi(BaseApi):
+    def connect(self, device_id, serial_number):
+        deviceModel = {'id': device_id, 'name': 'n/a', 'description': 'n/a', 'serial_number': serial_number}
+        return deviceModel
 
 
 class Statistics:
