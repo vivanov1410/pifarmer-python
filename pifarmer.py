@@ -27,15 +27,10 @@ def online():
     try:
         host = socket.gethostbyname(server)
         socket.create_connection((host, 80), 2)
-        return True
+        return False
     except:
         pass
     return False
-
-
-def offline():
-    return True
-    #return not online()
 
 
 def connect_device(device_id, environment='development'):
@@ -58,8 +53,6 @@ class Device:
 class BaseApi:
     def __init__(self, environment='development'):
         self.base_url = 'http://localhost:54627/v1' if environment == 'development' else 'http://pifarm.apphb.com/v1'
-        self.offline = offline
-        self.online = not offline
         self.sessionToken = None
 
 
