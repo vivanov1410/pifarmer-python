@@ -1,5 +1,4 @@
 import subprocess
-import os
 
 from cache import *
 
@@ -13,173 +12,98 @@ class Device:
         self.name = name
         self.description = description
         self.serial_number = serial_number
-        self.stats = Statistics()
+        self.stats = DeviceStatistics()
 
     def heartbeat(self):
         self._api.heartbeat(self)
 
     def show_cache(self):
         for reading in StatisticsReading.select():
-            print('device_id={0}, cpu_temp={1}, gpu_temp={2}, at={3}'
-                  .format(reading.device_id, reading.cpu_temperature, reading.gpu_temperature, reading.at))
+            print('device_id={0}, at={1}, cpu_temp={2}, gpu_temp={3}'
+                  .format(reading.device_id, int(reading.at), reading.cpu_temperature, reading.gpu_temperature))
 
 
-class Statistics:
-
-    def __init__(self):
-        self.general = General()
-        self.cpu = Cpu()
-        self.gpu = Gpu()
-        self.memory = Memory()
-        self.hdd = Hdd()
-        self.network = Network()
-
-
-class General:
-    """General device information"""
+class DeviceStatistics:
 
     def __init__(self):
         pass
 
     @property
     def uptime(self):
+        """Returns how long the system has been up (int) (in seconds)"""
         try:
-            output = subprocess.check_output(['uptime'])
-            search = re.search(r'up\s(.*?)(?=\,)', output, re.I)
+            output = subprocess.check_output('uptime')
+            search = re.search(r'(.*)\s', output, re.I)
             uptime = search.group(1)
-            return uptime
-        except:
-            return 'n/a'
-
-    @property
-    def processes(self):
-        try:
-            output = subprocess.check_output(['ps', '-e'])
-            processes = len(output.split('\n'))
-            return processes
-        except:
-            return 'n/a'
-
-
-class Cpu:
-    """CPU information"""
-
-    def __init__(self):
-        pass
-
-    @property
-    def temperature(self):
-        try:
-            output = subprocess.check_output(['cat', '/sys/class/thermal/thermal_zone0/temp'])
-            temperature = float(output)
+            return int(uptime)
         except:
             return 0
 
-        #return '{0:.2f} C'.format(temperature / 1000)
-        return temperature
-
-
-class Gpu:
-    """GPU information"""
-
-    def __init__(self):
-        pass
+    @property
+    def cpu_temperature(self):
+        """Returns CPU temperature (float) in Celsius"""
+        try:
+            output = subprocess.check_output(['cat', '/sys/class/thermal/thermal_zone0/temp'])
+            return float(output) / 1000
+        except:
+            return 0.0
 
     @property
-    def temperature(self):
+    def gpu_temperature(self):
+        """Returns GPU temperature (float) in Celsius"""
         try:
             output = subprocess.check_output(['/opt/vc/bin/vcgencmd', 'measure_temp'])
             search = re.search(r'temp=(.*?)(?=\')', output, re.I)
-            temperature = float(search.group(1))
+            return float(search.group(1))
+        except:
+            return 0.0
+
+    @property
+    def memory_total(self):
+        """Returns total memory (int) in Kilobytes"""
+        try:
+            output = subprocess.check_output(['free', '-k'])
+            total = output.split('\n')[1].split()[1]
+            return int(total)
         except:
             return 0
 
-        return temperature
-        #return '{0:.2f} C'.format(temperature)
-
-
-class Memory:
-    """Memory information"""
-
-    def __init__(self):
-        pass
-
     @property
-    def total(self):
+    def memory_used(self):
+        """Returns used memory (int) in Kilobytes"""
         try:
-            output = subprocess.check_output(['free', '-m'])
-            total = output.split('\n')[1].split()[1]
-            return '{} MB'.format(int(total))
+            output = subprocess.check_output(['free', '-k'])
+            used = output.split('\n')[1].split()[2]
+            return int(used)
         except:
-            return 'n/a'
+            return 0
 
     @property
-    def used(self):
-        output = subprocess.check_output(['free', '-m'])
-        used = output.split('\n')[1].split()[2]
-        return '{} MB'.format(int(used))
+    def memory_free(self):
+        """Returns free memory (int) in Kilobytes"""
+        return self.memory_total - self.memory_used
 
     @property
-    def free(self):
+    def hdd_total(self):
+        """Returns total hdd space on main drive (int) in Kilobytes"""
         try:
-            output = subprocess.check_output(['free', '-m'])
-            free = output.split('\n')[1].split()[3]
-            return '{} MB'.format(int(free))
-        except:
-            return 'n/a'
-
-
-class Hdd:
-    """HDD information"""
-
-    def __init__(self):
-        pass
-
-    @property
-    def total(self):
-        try:
-            output = subprocess.check_output(['df', '-h'])
+            output = subprocess.check_output('df')
             total = output.split('\n')[1].split()[1]
             return total
         except:
-            return 'n/a'
+            return 0
 
     @property
-    def used(self):
-        output = subprocess.check_output(['df', '-h'])
-        used = output.split('\n')[1].split()[2]
-        return used
-
-    @property
-    def free(self):
+    def hdd_used(self):
+        """Returns used hdd space on main drive (int) in Kilobytes"""
         try:
-            output = subprocess.check_output(['df', '-h'])
-            free = output.split('\n')[1].split()[3]
-            return free
+            output = subprocess.check_output('df')
+            used = output.split('\n')[1].split()[2]
+            return used
         except:
-            return 'n/a'
-
-
-class Network:
-    """docstring for Network"""
-
-    def __init__(self):
-        pass
+            return 0
 
     @property
-    def ip(self):
-        try:
-            output = subprocess.check_output(['ip', 'route', 'list']).split()
-            index = output.index('src') + 1
-            ip = output[index]
-            return ip
-        except:
-            return 'n/a'
-
-    @property
-    def connections(self):
-        try:
-            output = subprocess.check_output(['netstat', '-tun'])
-            return len([x for x in output.split() if x == 'ESTABLISHED'])
-        except:
-            return 'n/a'
+    def hdd_free(self):
+        """Returns free hdd space on main drive (int) in Kilobytes"""
+        return self.hdd_total - self.hdd_used

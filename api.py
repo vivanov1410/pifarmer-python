@@ -28,6 +28,20 @@ class OnlineApi(BaseApi):
         else:
             response.raise_for_status()
 
+    def heartbeat(self):
+        if at is None:
+        at = datetime.utcnow()
+
+        url = '{0}/readings'.format(self._api.url)
+        headers = {'content-type': 'application/json', 'X-Pifarm-Session': self._api.sessionToken}
+        payload = {'streamId': self._streamId, 'value': value, 'at': str(at)}
+
+        response = requests.post(url, data=json.dumps(payload), headers=headers)
+        if response.status_code == requests.codes.ok:
+          return true
+        else:
+          response.raise_for_status()
+
 
 class OfflineApi(BaseApi):
     def connect(self, device_id, serial_number):
@@ -38,7 +52,12 @@ class OfflineApi(BaseApi):
     def heartbeat(self, device):
         stats = device.stats
         reading = StatisticsReading(device_id=device.id,
-                                    cpu_temperature=stats.cpu.temperature,
-                                    gpu_temperature=stats.gpu.temperature,
+                                    uptime=stats.uptime,
+                                    cpu_temperature=stats.cpu_temperature,
+                                    gpu_temperature=stats.gpu_temperature,
+                                    memory_total=stats.memory_total,
+                                    memory_used=stats.memory_used,
+                                    hdd_total=stats.hdd_total,
+                                    hdd_used=stats.hdd_used,
                                     at=time.time())
         reading.save()

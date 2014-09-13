@@ -15,7 +15,11 @@ class BaseModel(Model):
 
 class StatisticsReading(BaseModel):
     device_id = CharField()
-    at = DateTimeField()
+    uptime = IntegerField()
     cpu_temperature = FloatField()
     gpu_temperature = FloatField()
-    # add other fields
+    memory_total = IntegerField()
+    memory_used = IntegerField()
+    hdd_total = IntegerField()
+    hdd_used = IntegerField()
+    at = DateTimeField()

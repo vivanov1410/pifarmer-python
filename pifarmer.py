@@ -10,7 +10,7 @@ def online():
     try:
         host = socket.gethostbyname(server)
         socket.create_connection((host, 80), 2)
-        return False # TODO: change back to true
+        return False
     except:
         pass
     return False
@@ -18,7 +18,6 @@ def online():
 
 def connect_device(device_id, environment='development'):
     api = OnlineApi(environment) if online() else OfflineApi(environment)
-    serial_detector = SerialNumberDetector()
-    serial_number = serial_detector.serial_number
+    serial_number = SerialNumberDetector().serial_number
     device = api.connect(device_id, serial_number)
     return Device(api, device['id'], device['name'], device['description'], device['serial_number'])
