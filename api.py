@@ -1,5 +1,6 @@
 import json
 import time
+from datetime import datetime
 
 import requests
 
@@ -8,7 +9,7 @@ from cache import *
 
 class BaseApi:
     def __init__(self, environment='development'):
-        self.base_url = 'http://localhost:3000/v1' if environment == 'development' else 'http://pifarm.apphb.com/v1'
+        self.base_url = 'http://pifarm-api.herokuapp.com/v1' if environment == 'development' else 'http://pifarm.apphb.com/v1'
         self.sessionToken = None
         self._cache = None
 
@@ -28,20 +29,22 @@ class OnlineApi(BaseApi):
         else:
             response.raise_for_status()
 
-    def heartbeat(self):
-        pass
-        # if at is None:
-        # at = datetime.utcnow()
-        #
-        # url = '{0}/readings'.format(self._api.url)
-        # headers = {'content-type': 'application/json', 'X-Pifarm-Session': self._api.sessionToken}
-        # payload = {'streamId': self._streamId, 'value': value, 'at': str(at)}
-        #
-        # response = requests.post(url, data=json.dumps(payload), headers=headers)
-        # if response.status_code == requests.codes.ok:
-        #   return true
-        # else:
-        #   response.raise_for_status()
+    def heartbeat(self, device):
+        at = datetime.utcnow()
+
+        url = '{0}/devices/{1}/stats'.format(self.base_url)
+        headers = {'content-type': 'application/json', 'Authorization': 'Bearer ' + self.sessionToken}
+        payload = {'uptime': device.uptime,
+                   'temperature': {'cpu': device.cpu_temperature, 'gpu': device.gpu_temperature},
+                   'memory': {'total': device.memory_total, 'used': device.memory_used},
+                   'hdd': {'total': device.hdd_total, 'used': device.hdd_used},
+                   at: str(datetime.utcnow())}
+
+        response = requests.post(url, data=json.dumps(payload), headers=headers)
+        if response.status_code == requests.codes.ok:
+            return True
+        else:
+            response.raise_for_status()
 
 
 class OfflineApi(BaseApi):
