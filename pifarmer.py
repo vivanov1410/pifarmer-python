@@ -17,7 +17,7 @@ def online():
 
 
 def connect_device(device_id, environment='development'):
-    api = OnlineApi(environment) if online() else OfflineApi(environment)
     serial_number = SerialNumberDetector().serial_number
+    api = OnlineApi(environment) if online() else OfflineApi(environment)
     device = api.connect(device_id, serial_number)
     return Device(api, device['id'], device['name'], device['description'], device['serial_number'])

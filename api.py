@@ -8,14 +8,14 @@ from cache import *
 
 class BaseApi:
     def __init__(self, environment='development'):
-        self.base_url = 'http://localhost:54627/v1' if environment == 'development' else 'http://pifarm.apphb.com/v1'
+        self.base_url = 'http://localhost:3000/v1' if environment == 'development' else 'http://pifarm.apphb.com/v1'
         self.sessionToken = None
         self._cache = None
 
 
 class OnlineApi(BaseApi):
     def connect(self, device_id, serial_number):
-        url = '{0}/auth/login/device'.format(self.base_url)
+        url = '{0}/auth/login-device'.format(self.base_url)
         headers = {'content-type': 'application/json'}
         payload = {'deviceId': device_id, 'serialNumber': serial_number}
 
@@ -29,18 +29,19 @@ class OnlineApi(BaseApi):
             response.raise_for_status()
 
     def heartbeat(self):
-        if at is None:
-        at = datetime.utcnow()
-
-        url = '{0}/readings'.format(self._api.url)
-        headers = {'content-type': 'application/json', 'X-Pifarm-Session': self._api.sessionToken}
-        payload = {'streamId': self._streamId, 'value': value, 'at': str(at)}
-
-        response = requests.post(url, data=json.dumps(payload), headers=headers)
-        if response.status_code == requests.codes.ok:
-          return true
-        else:
-          response.raise_for_status()
+        pass
+        # if at is None:
+        # at = datetime.utcnow()
+        #
+        # url = '{0}/readings'.format(self._api.url)
+        # headers = {'content-type': 'application/json', 'X-Pifarm-Session': self._api.sessionToken}
+        # payload = {'streamId': self._streamId, 'value': value, 'at': str(at)}
+        #
+        # response = requests.post(url, data=json.dumps(payload), headers=headers)
+        # if response.status_code == requests.codes.ok:
+        #   return true
+        # else:
+        #   response.raise_for_status()
 
 
 class OfflineApi(BaseApi):
