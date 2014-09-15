@@ -60,9 +60,9 @@ class DeviceStatistics:
 
     @property
     def memory_total(self):
-        """Returns total memory (int) in Kilobytes"""
+        """Returns total memory (int) in bytes"""
         try:
-            output = subprocess.check_output(['free', '-k'])
+            output = subprocess.check_output('free')
             total = output.split('\n')[1].split()[1]
             return int(total)
         except:
@@ -70,9 +70,9 @@ class DeviceStatistics:
 
     @property
     def memory_used(self):
-        """Returns used memory (int) in Kilobytes"""
+        """Returns used memory (int) in bytes"""
         try:
-            output = subprocess.check_output(['free', '-k'])
+            output = subprocess.check_output('free')
             used = output.split('\n')[1].split()[2]
             return int(used)
         except:
@@ -80,30 +80,30 @@ class DeviceStatistics:
 
     @property
     def memory_free(self):
-        """Returns free memory (int) in Kilobytes"""
+        """Returns free memory (int) in bytes"""
         return self.memory_total - self.memory_used
 
     @property
     def hdd_total(self):
-        """Returns total hdd space on main drive (int) in Kilobytes"""
+        """Returns total hdd space on main drive (int) in bytes"""
         try:
             output = subprocess.check_output('df')
             total = output.split('\n')[1].split()[1]
-            return total
+            return int(total/1024)
         except:
             return 0
 
     @property
     def hdd_used(self):
-        """Returns used hdd space on main drive (int) in Kilobytes"""
+        """Returns used hdd space on main drive (int) in bytes"""
         try:
             output = subprocess.check_output('df')
             used = output.split('\n')[1].split()[2]
-            return used
+            return int(used/1024)
         except:
             return 0
 
     @property
     def hdd_free(self):
-        """Returns free hdd space on main drive (int) in Kilobytes"""
+        """Returns free hdd space on main drive (int) in bytes"""
         return self.hdd_total - self.hdd_used
