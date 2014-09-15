@@ -62,7 +62,7 @@ class DeviceStatistics:
     def memory_total(self):
         """Returns total memory (int) in bytes"""
         try:
-            output = subprocess.check_output('free')
+            output = subprocess.check_output(['free', '-b'])
             total = output.split('\n')[1].split()[1]
             return int(total)
         except:
@@ -72,7 +72,7 @@ class DeviceStatistics:
     def memory_used(self):
         """Returns used memory (int) in bytes"""
         try:
-            output = subprocess.check_output('free')
+            output = subprocess.check_output(['free', '-b'])
             used = output.split('\n')[1].split()[2]
             return int(used)
         except:
