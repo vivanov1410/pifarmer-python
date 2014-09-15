@@ -10,7 +10,7 @@ def online():
     try:
         host = socket.gethostbyname(server)
         socket.create_connection((host, 80), 2)
-        return False
+        return True
     except:
         pass
     return False

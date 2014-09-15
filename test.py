@@ -1,8 +1,7 @@
 import pifarmer
 
-device = pifarmer.connect_device('54154113a87624c57c1038fb')
-print('device.name')
-#device.heartbeat()
+device = pifarmer.connect_device('54154c97711f5f79860fb064')
+device.heartbeat()
 
 # print('general.uptime: {}'.format(device.general.uptime))
 # print('general.processes: {}'.format(device.general.processes))
