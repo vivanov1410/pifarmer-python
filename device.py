@@ -25,7 +25,6 @@ class Device:
 
 
 class DeviceStatistics:
-
     def __init__(self):
         pass
 
@@ -89,7 +88,7 @@ class DeviceStatistics:
         try:
             output = subprocess.check_output('df')
             total = int(output.split('\n')[1].split()[1])
-            return total/1024
+            return total * 1024
         except:
             return 0
 
@@ -99,7 +98,7 @@ class DeviceStatistics:
         try:
             output = subprocess.check_output('df')
             used = int(output.split('\n')[1].split()[2])
-            return used/1024
+            return used * 1024
         except:
             return 0
 
