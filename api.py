@@ -30,15 +30,13 @@ class OnlineApi(BaseApi):
             response.raise_for_status()
 
     def heartbeat(self, device):
-        at = datetime.utcnow()
-
-        url = '{0}/devices/{1}/stats'.format(self.base_url)
+        url = '{0}/devices/{1}/stats'.format(self.base_url, device.id)
         headers = {'content-type': 'application/json', 'Authorization': 'Bearer ' + self.sessionToken}
-        payload = {'uptime': device.uptime,
-                   'temperature': {'cpu': device.cpu_temperature, 'gpu': device.gpu_temperature},
-                   'memory': {'total': device.memory_total, 'used': device.memory_used},
-                   'hdd': {'total': device.hdd_total, 'used': device.hdd_used},
-                   at: str(datetime.utcnow())}
+        payload = {'uptime': device.stats.uptime,
+                   'temperature': {'cpu': device.stats.cpu_temperature, 'gpu': device.stats.gpu_temperature},
+                   'memory': {'total': device.stats.memory_total, 'used': device.stats.memory_used},
+                   'hdd': {'total': device.stats.hdd_total, 'used': device.stats.hdd_used},
+                   'at': str(datetime.utcnow())}
 
         response = requests.post(url, data=json.dumps(payload), headers=headers)
         if response.status_code == requests.codes.ok:

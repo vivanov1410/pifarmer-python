@@ -1,4 +1,5 @@
 import subprocess
+import re
 
 from cache import *
 
@@ -32,10 +33,9 @@ class DeviceStatistics:
     def uptime(self):
         """Returns how long the system has been up (int) (in seconds)"""
         try:
-            output = subprocess.check_output('uptime')
-            search = re.search(r'(.*)\s', output, re.I)
-            uptime = search.group(1)
-            return int(uptime)
+            output = subprocess.check_output(['cat', '/proc/uptime'])
+            uptime = output.split()[0]
+            return int(float(uptime))
         except:
             return 0
 
