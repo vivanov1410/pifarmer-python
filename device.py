@@ -34,8 +34,8 @@ class DeviceStatistics:
         """Returns how long the system has been up (int) (in seconds)"""
         try:
             output = subprocess.check_output(['cat', '/proc/uptime'])
-            uptime = output.split()[0]
-            return int(float(uptime))
+            uptime = float(output.split()[0])
+            return int(uptime)
         except:
             return 0
 
@@ -63,8 +63,8 @@ class DeviceStatistics:
         """Returns total memory (int) in bytes"""
         try:
             output = subprocess.check_output(['free', '-b'])
-            total = output.split('\n')[1].split()[1]
-            return int(total)
+            total = int(output.split('\n')[1].split()[1])
+            return total
         except:
             return 0
 
@@ -73,8 +73,8 @@ class DeviceStatistics:
         """Returns used memory (int) in bytes"""
         try:
             output = subprocess.check_output(['free', '-b'])
-            used = output.split('\n')[1].split()[2]
-            return int(used)
+            used = int(output.split('\n')[1].split()[2])
+            return used
         except:
             return 0
 
@@ -88,8 +88,8 @@ class DeviceStatistics:
         """Returns total hdd space on main drive (int) in bytes"""
         try:
             output = subprocess.check_output('df')
-            total = output.split('\n')[1].split()[1]
-            return int(total/1024)
+            total = int(output.split('\n')[1].split()[1])
+            return total/1024
         except:
             return 0
 
@@ -98,8 +98,8 @@ class DeviceStatistics:
         """Returns used hdd space on main drive (int) in bytes"""
         try:
             output = subprocess.check_output('df')
-            used = output.split('\n')[1].split()[2]
-            return int(used/1024)
+            used = int(output.split('\n')[1].split()[2])
+            return used/1024
         except:
             return 0
 
